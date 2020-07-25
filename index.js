@@ -68,8 +68,47 @@ app.post("/auth/sign-up", async function(req, res, next) {
   }
 });
 
-app.get("/movies", async function(req, res, next) {
+app.get("/users/:userId", async function(req, res, next) {
+  try {
+    const { userId } = req.params;
+    const { token } = req.cookies;
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/users/wp/${userId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: "get"
+    });
 
+    if (status !== 200) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put("/user-edit/:userId", async function(req, res, next) {
+  try {
+    const { body: user } = req;
+    const { userId } = req.params;
+    const { token } = req.cookies;
+
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/users/:${userId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: "put",
+      data: user
+    });
+
+    if (status !== 200) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.post("/user-movies", async function(req, res, next) {
@@ -163,5 +202,5 @@ app.delete("/user-movies/:userMovieId", async function(req, res, next) {
 // );
 
 app.listen(config.port, function() {
-  console.log(`Listening http://localhost:${config.port}`);
+  console.log(`SSR-SERVER Listening http://localhost:${config.port}`);
 });
