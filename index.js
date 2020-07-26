@@ -93,9 +93,8 @@ app.put("/user-edit/:userId", async function(req, res, next) {
     const { body: user } = req;
     const { userId } = req.params;
     const { token } = req.cookies;
-
     const { data, status } = await axios({
-      url: `${config.apiUrl}/api/users/:${userId}`,
+      url: `${config.apiUrl}/api/users/${userId}`,
       headers: { Authorization: `Bearer ${token}` },
       method: "put",
       data: user
